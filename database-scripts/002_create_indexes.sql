@@ -1,0 +1,11 @@
+CREATE INDEX IX_Users_ClientId ON Users(ClientId);
+CREATE INDEX IX_Users_RoleId ON Users(RoleId);
+CREATE INDEX IX_ClientSubscriptions_ClientId_Status ON ClientSubscriptions(ClientId, Status);
+CREATE INDEX IX_QrCodes_ClientId ON QrCodes(ClientId);
+CREATE INDEX IX_QrCodes_QrTypeId ON QrCodes(QrTypeId);
+CREATE INDEX IX_QrCodes_ShortCode ON QrCodes(ShortCode);
+CREATE INDEX IX_QrCodes_Status ON QrCodes(Status);
+CREATE INDEX IX_QrCodes_CreatedAt ON QrCodes(CreatedAt DESC);
+CREATE INDEX IX_QrScans_QrCodeId_ScanDate ON QrScans(QrCodeId, ScanDate DESC);
+CREATE INDEX IX_QrScans_ClientId_ScanDate ON QrScans(ClientId, ScanDate DESC);
+CREATE INDEX IX_AuditLogs_ClientId_CreatedAt ON AuditLogs(ClientId, CreatedAt DESC);

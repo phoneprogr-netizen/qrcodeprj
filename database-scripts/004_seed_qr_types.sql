@@ -1,0 +1,22 @@
+INSERT INTO QrTypes (Code, Name, Description, Category, IsDynamicSupported, RequiresDestinationUrl, RequiresPayload, PayloadSchemaJson, SortOrder, IsActive)
+VALUES
+('URL','URL','Link URL','LINK',1,0,1,'{"properties":{"url":{"type":"string"}}}',1,1),
+('WEB_PAGE','Web Page','Pagina web','LINK',1,0,1,'{"properties":{"url":{"type":"string"}}}',2,1),
+('VCARD','vCard','Contatto','CONTACT',0,0,1,NULL,3,1),
+('EMAIL','Email','Mail precompilata','CONTACT',1,0,1,NULL,4,1),
+('PHONE','Phone','Telefono','CONTACT',1,0,1,NULL,5,1),
+('WHATSAPP','WhatsApp','Messaggio WhatsApp','CONTACT',1,0,1,NULL,6,1),
+('SMS','SMS','Messaggio SMS','CONTACT',1,0,1,NULL,7,1),
+('WIFI','WiFi','Accesso WiFi','UTILITY',0,0,1,NULL,8,1),
+('EVENT','Event','Evento calendario','UTILITY',1,0,1,NULL,9,1),
+('GEOLOCATION','Geolocation','Coordinate','UTILITY',1,0,1,NULL,10,1),
+('TEXT','Text','Testo libero','GENERAL',1,0,1,NULL,11,1),
+('PROMO_CODE','Promo Code','Codice promozionale','BUSINESS',1,0,1,NULL,12,1),
+('PAYMENT_LINK','Payment Link','Pagamento','BUSINESS',1,0,1,NULL,13,1),
+('APP_DOWNLOAD','App Download','Store intelligenti','APP',1,0,1,NULL,14,1),
+('PRODUCT','Product','Scheda prodotto','BUSINESS',1,0,1,NULL,15,1),
+('TICKET','Ticket','Biglietto','BUSINESS',1,0,1,NULL,16,1),
+('DOCUMENT','Document','Documento','BUSINESS',1,0,1,NULL,17,1),
+('MULTI_LINK','Multi Link','Pagina con link multipli','LINK',1,0,1,NULL,18,1),
+('AUTH','Auth','Autenticazione token','SECURITY',1,0,1,NULL,19,1),
+('OPERATIONAL','Operational','Operazioni di processo','OPERATIONS',1,0,1,NULL,20,1);
