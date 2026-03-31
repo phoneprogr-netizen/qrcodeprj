@@ -1,0 +1,8 @@
+@model QrPortal.Domain.Entities.QrCode
+<h2>@Model.Title</h2>
+<dl class="row">
+    <dt class="col-sm-2">Tipo</dt><dd class="col-sm-10">@Model.QrTypeId</dd>
+    <dt class="col-sm-2">Contenuto</dt><dd class="col-sm-10">@Model.GeneratedContent</dd>
+</dl>
+<a class="btn btn-outline-primary" href="@Url.Action("DownloadPng", new { id = Model.Id })">PNG</a>
+<a class="btn btn-outline-secondary" href="@Url.Action("DownloadSvg", new { id = Model.Id })">SVG</a>
