@@ -5,6 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="QRCoder" Version="1.6.0" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\QrPortal.Domain\QrPortal.Domain.csproj" />
   </ItemGroup>
 </Project>
