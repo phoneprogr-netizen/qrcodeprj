@@ -1,4 +1,5 @@
 using QrPortal.Application.DTOs;
+using QrPortal.DataAccess.Interfaces;
 using QrPortal.Domain.Entities;
 
 namespace QrPortal.Application.Interfaces;
