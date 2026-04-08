@@ -1,23 +1,37 @@
 @model QrPortal.Domain.Entities.QrCode
-
+@{
+    var editVm = QrPortal.Web.ViewModels.CustomerQrCodeFormVm.FromEntity(Model);
+}
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h2 class="mb-1">@Model.Title</h2>
-        <p class="text-muted mb-0">Dettaglio QR e download file di stampa.</p>
-    </div>
+    <div><h2 class="mb-1">@Model.Title</h2></div>
     <div class="d-flex gap-2">
-        <a class="btn btn-outline-primary" href="@Url.Action("DownloadPng", new { id = Model.Id })">Scarica PNG</a>
-        <a class="btn btn-outline-secondary" href="@Url.Action("DownloadSvg", new { id = Model.Id })">Scarica SVG</a>
+        <a class="btn btn-outline-primary" href="@Url.Action("DownloadPng", new { id = Model.Id })">PNG</a>
+        <a class="btn btn-outline-secondary" href="@Url.Action("DownloadSvg", new { id = Model.Id })">SVG</a>
     </div>
 </div>
 
-<div class="card border-0 shadow-sm">
+<div class="card border-0 shadow-sm mb-3"><div class="card-body"><code>@Model.GeneratedContent</code></div></div>
+
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-header bg-white"><strong>Modifica QR</strong></div>
     <div class="card-body">
-        <dl class="row mb-0">
-            <dt class="col-sm-3">ID</dt><dd class="col-sm-9">@Model.Id</dd>
-            <dt class="col-sm-3">Tipo</dt><dd class="col-sm-9">@Model.QrTypeId</dd>
-            <dt class="col-sm-3">Contenuto generato</dt><dd class="col-sm-9"><code>@Model.GeneratedContent</code></dd>
-            <dt class="col-sm-3">Titolo</dt><dd class="col-sm-9">@Model.Title</dd>
-        </dl>
+        <form asp-action="Update" method="post" class="row g-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Id" value="@editVm.Id"/>
+            <input type="hidden" name="ClientId" value="@editVm.ClientId"/>
+            <div class="col-md-6"><label class="form-label">Titolo</label><input class="form-control" name="Title" value="@editVm.Title"/></div>
+            <div class="col-md-6"><label class="form-label">Stato</label><input class="form-control" name="Status" value="@editVm.Status"/></div>
+            <div class="col-12"><label class="form-label">URL destinazione</label><input class="form-control" name="DestinationUrl" value="@editVm.DestinationUrl"/></div>
+            <input type="hidden" name="QrTypeId" value="@editVm.QrTypeId"/>
+            <input type="hidden" name="CategoryId" value="@editVm.CategoryId"/>
+            <input type="hidden" name="PayloadJson" value="@editVm.PayloadJson"/>
+            <button class="btn btn-primary col-auto" type="submit">Salva</button>
+        </form>
     </div>
 </div>
+
+<form asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button class="btn btn-outline-danger" type="submit">Elimina QR</button>
+</form>

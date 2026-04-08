@@ -15,7 +15,9 @@ public interface IQrCodeService
     Task<PlanEligibilityResult> CanUseTrackingAsync(int clientId);
     Task<PlanEligibilityResult> CanUseMultiLinkAsync(int clientId);
     Task<int> CreateAsync(QrCodeCreateRequest request);
+    Task UpdateAsync(QrCodeUpdateRequest request);
     Task<QrCode?> GetByIdAsync(int id, int? clientId, bool isAdmin);
+    Task<IEnumerable<QrCodeListItem>> SearchAsync(int? clientId, bool isAdmin);
     Task<QrCode?> GetByShortCodeAsync(string shortCode);
     Task MarkDeletedAsync(int id, int clientId, int userId);
 }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using QrPortal.Application.DTOs;
 using QrPortal.DataAccess.Interfaces;
 using QrPortal.Domain.Entities;
 
@@ -178,5 +179,51 @@ public class PlanFormVm
         Price = plan.Price,
         DurationMonths = plan.DurationMonths,
         IsActive = plan.IsActive
+    };
+}
+
+public class CustomerQrCodeIndexVm
+{
+    public CustomerQrCodeFormVm Create { get; set; } = new();
+    public IEnumerable<QrCodeListItem> Items { get; set; } = [];
+    public IEnumerable<QrType> Types { get; set; } = [];
+    public IEnumerable<QrCategory> Categories { get; set; } = [];
+}
+
+public class CustomerQrCodeFormVm
+{
+    public int? Id { get; set; }
+    public int ClientId { get; set; }
+    [Required] public int QrTypeId { get; set; }
+    public int? CategoryId { get; set; }
+    [Required, StringLength(200)] public string Title { get; set; } = string.Empty;
+    [StringLength(500)] public string? Description { get; set; }
+    public bool IsDynamic { get; set; }
+    [StringLength(1000)] public string? DestinationUrl { get; set; }
+    public string? PayloadJson { get; set; } = "{}";
+    [StringLength(20)] public string Status { get; set; } = "Active";
+    public DateTime? ExpirationDate { get; set; }
+    public string? Notes { get; set; }
+
+    public QrCodeCreateRequest ToCreateRequest(int userId) => new(
+        ClientId, QrTypeId, CategoryId, Title, Description, IsDynamic, DestinationUrl, PayloadJson, ExpirationDate, Notes, userId);
+
+    public QrCodeUpdateRequest ToUpdateRequest(int userId) => new(
+        Id ?? 0, ClientId, QrTypeId, CategoryId, Title, Description, DestinationUrl, PayloadJson, Status, ExpirationDate, Notes, userId);
+
+    public static CustomerQrCodeFormVm FromEntity(QrCode qr) => new()
+    {
+        Id = qr.Id,
+        ClientId = qr.ClientId,
+        QrTypeId = qr.QrTypeId,
+        CategoryId = qr.CategoryId,
+        Title = qr.Title,
+        Description = qr.Description,
+        IsDynamic = qr.IsDynamic,
+        DestinationUrl = qr.DestinationUrl,
+        PayloadJson = qr.PayloadJson,
+        Status = qr.Status,
+        ExpirationDate = qr.ExpirationDate,
+        Notes = qr.Notes
     };
 }

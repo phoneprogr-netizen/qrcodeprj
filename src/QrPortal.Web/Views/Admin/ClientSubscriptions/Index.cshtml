@@ -1,14 +1,24 @@
+@model IEnumerable<QrPortal.DataAccess.Interfaces.ClientSubscriptionListItem>
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <div><h2 class="mb-1">Abbonamenti clienti</h2><p class="text-muted mb-0">Rinnovi, scadenze e fatturazione.</p></div>
-    <button class="btn btn-outline-primary">Esporta scadenze</button>
+    <div><h2 class="mb-1">Abbonamenti clienti</h2></div>
 </div>
 <div class="card border-0 shadow-sm">
     <div class="table-responsive">
         <table class="table mb-0">
-            <thead><tr><th>Cliente</th><th>Piano</th><th>Inizio</th><th>Fine</th><th>Rinnovo</th><th>Stato</th></tr></thead>
+            <thead><tr><th>Cliente</th><th>Piano</th><th>Inizio</th><th>Fine</th><th>Stato</th><th></th></tr></thead>
             <tbody>
-                <tr><td>Rossi SRL</td><td>Business Annuale</td><td>01/01/2026</td><td>31/12/2026</td><td>Automatico</td><td><span class="badge text-bg-success">Attivo</span></td></tr>
-                <tr><td>Caffè Milano</td><td>Starter Mensile</td><td>15/03/2026</td><td>15/04/2026</td><td>Manuale</td><td><span class="badge text-bg-danger">In scadenza</span></td></tr>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td>@s.ClientName</td><td>@s.PlanName</td><td>@s.StartDate:dd/MM/yyyy</td><td>@s.EndDate?.ToString("dd/MM/yyyy")</td><td>@s.Status</td>
+                        <td>
+                            @if (s.Status == "Active")
+                            {
+                                <form asp-action="MarkExpired" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@s.Id"/><button class="btn btn-sm btn-outline-danger">Segna scaduto</button></form>
+                            }
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
