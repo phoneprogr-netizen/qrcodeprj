@@ -27,7 +27,12 @@ public class AuthController(IAuthService authService) : Controller
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.Username),
-            new(ClaimTypes.Role, user.RoleId == 3 ? SystemRoles.Customer : SystemRoles.Admin),
+            new(ClaimTypes.Role, user.RoleId switch
+            {
+                1 => SystemRoles.SuperAdmin,
+                3 => SystemRoles.Customer,
+                _ => SystemRoles.Admin
+            }),
             new("ClientId", user.ClientId?.ToString() ?? string.Empty)
         };
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -37,6 +42,7 @@ public class AuthController(IAuthService authService) : Controller
     }
 
     [HttpPost("auth/logout")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync();

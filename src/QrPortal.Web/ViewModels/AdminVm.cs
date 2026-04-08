@@ -38,6 +38,7 @@ public class ClientFormVm
     public string Status { get; set; } = "Active";
 
     public bool IsActive { get; set; } = true;
+    public bool CreateDefaultCustomerUser { get; set; } = true;
 
     public Client ToEntity(Client? current = null)
     {
@@ -64,6 +65,50 @@ public class ClientFormVm
         Phone = client.Phone,
         Status = client.Status,
         IsActive = client.IsActive
+    };
+}
+
+public class UserIndexVm
+{
+    public string? Query { get; set; }
+    public int? RoleId { get; set; }
+    public bool? IsActive { get; set; }
+    public IEnumerable<Role> Roles { get; set; } = [];
+    public IEnumerable<UserListItem> Items { get; set; } = [];
+}
+
+public class UserFormVm
+{
+    [Required, StringLength(100)]
+    public string Username { get; set; } = string.Empty;
+
+    [Required, StringLength(150)]
+    public string FullName { get; set; } = string.Empty;
+
+    [Required, EmailAddress, StringLength(200)]
+    public string Email { get; set; } = string.Empty;
+
+    [StringLength(50)]
+    public string? Phone { get; set; }
+
+    [Required]
+    public int RoleId { get; set; } = 3;
+
+    public int? ClientId { get; set; }
+    public bool IsActive { get; set; } = true;
+
+    public bool RequiresClientAssociation => RoleId == 3;
+
+    public User ToEntity(string passwordHash) => new()
+    {
+        Username = Username.Trim(),
+        FullName = FullName.Trim(),
+        Email = Email.Trim(),
+        Phone = Phone?.Trim(),
+        RoleId = RoleId,
+        ClientId = RoleId == 3 ? ClientId : null,
+        IsActive = IsActive,
+        PasswordHash = passwordHash
     };
 }
 

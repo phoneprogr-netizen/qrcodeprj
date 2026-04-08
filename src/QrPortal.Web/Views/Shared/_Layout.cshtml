@@ -9,21 +9,31 @@
 <body class="bg-body-tertiary">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" asp-controller="Home" asp-action="Index">QR Portal Web</a>
+        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">QR Portal Web</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
-                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="About">Chi siamo</a></li>
-                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Contact">Contattaci</a></li>
-                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Register">Registrati</a></li>
-                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Demo">Demo</a></li>
+                <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">Chi siamo</a></li>
+                <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Contact">Contattaci</a></li>
+                <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Register">Registrati</a></li>
+                <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Demo">Demo</a></li>
             </ul>
             <div class="d-flex gap-2">
-                <a class="btn btn-outline-light" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Area Admin</a>
-                <a class="btn btn-success" asp-controller="Auth" asp-action="Login">Sei già cliente? Accedi</a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <form method="post" asp-area="" asp-controller="Auth" asp-action="Logout">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-warning">Logout</button>
+                    </form>
+                }
+                else
+                {
+                    <a class="btn btn-outline-light" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Area Admin</a>
+                    <a class="btn btn-success" asp-area="" asp-controller="Auth" asp-action="Login">Sei già cliente? Accedi</a>
+                }
             </div>
         </div>
     </div>

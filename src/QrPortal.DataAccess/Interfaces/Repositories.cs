@@ -2,8 +2,18 @@ using QrPortal.Domain.Entities;
 
 namespace QrPortal.DataAccess.Interfaces;
 
-public interface IUserRepository { Task<User?> GetByUsernameAsync(string username); }
-public interface IRoleRepository { Task<IEnumerable<Role>> GetAllAsync(); }
+public interface IUserRepository
+{
+    Task<User?> GetByUsernameAsync(string username);
+    Task<IEnumerable<UserListItem>> SearchAsync(string? query, int? roleId, bool? isActive);
+    Task<int> CreateAsync(User user);
+    Task<int> CountByClientIdAsync(int clientId);
+}
+public interface IRoleRepository
+{
+    Task<IEnumerable<Role>> GetAllAsync();
+    Task<Role?> GetByNameAsync(string name);
+}
 public interface IClientRepository
 {
     Task<Client?> GetByIdAsync(int id);
@@ -43,4 +53,18 @@ public class ClientListItem
     public bool IsActive { get; set; }
     public string? CurrentPlanName { get; set; }
     public int ActiveQrCount { get; set; }
+}
+
+public class UserListItem
+{
+    public int Id { get; set; }
+    public int? ClientId { get; set; }
+    public string Username { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public int RoleId { get; set; }
+    public string RoleName { get; set; } = string.Empty;
+    public string? ClientName { get; set; }
+    public bool IsActive { get; set; }
+    public DateTime? LastLoginAt { get; set; }
 }
