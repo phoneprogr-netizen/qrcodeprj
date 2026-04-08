@@ -24,6 +24,15 @@
             <div class="d-flex gap-2">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
+                    if (User.IsInRole("Customer"))
+                    {
+                        <a class="btn btn-outline-light" asp-area="Customer" asp-controller="Dashboard" asp-action="Index">Dashboard Customer</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-light" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard Admin</a>
+                    }
+
                     <form method="post" asp-area="" asp-controller="Auth" asp-action="Logout">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-outline-warning">Logout</button>
