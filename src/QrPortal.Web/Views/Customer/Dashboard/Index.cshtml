@@ -17,6 +17,30 @@
     <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">Scadenza abbonamento</small><h4 class="mb-0">@(sub?.EndDate?.ToString("dd/MM/yyyy") ?? "-" )</h4></div></div></div>
 </div>
 
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="mb-3">Accessi rapidi</h5>
+        <div class="d-grid gap-3">
+            <a class="btn btn-lg btn-outline-primary dashboard-action-btn" asp-area="Customer" asp-controller="QrCodes" asp-action="Index">
+                <span class="material-symbols-outlined dashboard-action-icon" aria-hidden="true">devices</span>
+                Dispositivi
+            </a>
+            <a class="btn btn-lg btn-outline-primary dashboard-action-btn" asp-area="Customer" asp-controller="Dashboard" asp-action="Index">
+                <span class="material-symbols-outlined dashboard-action-icon" aria-hidden="true">warning</span>
+                Allarmi
+            </a>
+            <a class="btn btn-lg btn-outline-primary dashboard-action-btn" asp-area="Customer" asp-controller="Profile" asp-action="Index">
+                <span class="material-symbols-outlined dashboard-action-icon" aria-hidden="true">my_location</span>
+                Bersaglio
+            </a>
+            <a class="btn btn-lg btn-outline-primary dashboard-action-btn" asp-area="Customer" asp-controller="QrCodes" asp-action="Index">
+                <span class="material-symbols-outlined dashboard-action-icon" aria-hidden="true">route</span>
+                Tragitti
+            </a>
+        </div>
+    </div>
+</div>
+
 @if (sub is null || isExpired)
 {
     <div class="alert alert-danger">Abbonamento non attivo o scaduto: contattare l'amministratore per il rinnovo.</div>
