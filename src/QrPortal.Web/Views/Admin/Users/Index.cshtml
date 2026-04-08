@@ -1,1 +1,24 @@
-<h2>Users</h2><p>Gestione Users area amministrativa.</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div><h2 class="mb-1">Utenti amministrativi</h2><p class="text-muted mb-0">Gestione accessi backoffice e permessi.</p></div>
+    <button class="btn btn-primary">Nuovo utente admin</button>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <div class="row g-3 mb-3">
+            <div class="col-md-4"><input class="form-control" placeholder="Cerca per nome o email" /></div>
+            <div class="col-md-3"><select class="form-select"><option>Tutti i ruoli</option><option>SuperAdmin</option><option>Admin</option></select></div>
+            <div class="col-md-3"><select class="form-select"><option>Tutti gli stati</option><option>Attivo</option><option>Sospeso</option></select></div>
+            <div class="col-md-2"><button class="btn btn-outline-secondary w-100">Filtra</button></div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle mb-0">
+                <thead><tr><th>Nome</th><th>Email</th><th>Ruolo</th><th>Ultimo accesso</th><th>Stato</th><th></th></tr></thead>
+                <tbody>
+                    <tr><td>Marco Bianchi</td><td>marco@qrportal.it</td><td>SuperAdmin</td><td>08/04/2026 09:15</td><td><span class="badge text-bg-success">Attivo</span></td><td><button class="btn btn-sm btn-outline-primary">Modifica</button></td></tr>
+                    <tr><td>Laura Neri</td><td>laura@qrportal.it</td><td>Admin</td><td>07/04/2026 18:41</td><td><span class="badge text-bg-success">Attivo</span></td><td><button class="btn btn-sm btn-outline-primary">Modifica</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
