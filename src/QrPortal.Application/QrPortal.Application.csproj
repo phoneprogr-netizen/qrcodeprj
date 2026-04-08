@@ -9,5 +9,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\QrPortal.Domain\QrPortal.Domain.csproj" />
+    <ProjectReference Include="..\QrPortal.DataAccess\QrPortal.DataAccess.csproj" />
   </ItemGroup>
 </Project>
