@@ -31,13 +31,13 @@ public class RedirectController(
         await qrCodeRepository.UpdateScanAsync(qr.Id, DateTime.UtcNow);
         var target = resolver.ResolveFinalUrl(qr, Request.Headers.UserAgent.ToString());
 
-        if ((await IsMultiLinkAsync(qr)).IsMulti) return View("~/Views/Redirect/MultiLink.cshtml", qr);
+        if (await IsMultiLinkAsync(qr)) return View("~/Views/Redirect/MultiLink.cshtml", qr);
         return Redirect(target);
     }
 
-    private async Task<(bool IsMulti)> IsMultiLinkAsync(QrCode qr)
+    private async Task<bool> IsMultiLinkAsync(QrCode qr)
     {
         await Task.CompletedTask;
-        return (qr.PayloadJson?.Contains("\"links\"") == true);
+        return qr.PayloadJson?.Contains("\"links\"") == true;
     }
 }
