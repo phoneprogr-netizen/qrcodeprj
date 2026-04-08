@@ -13,4 +13,18 @@ public record QrCodeCreateRequest(
     string? Notes,
     int UserId);
 
+public record QrCodeUpdateRequest(
+    int Id,
+    int ClientId,
+    int QrTypeId,
+    int? CategoryId,
+    string Title,
+    string? Description,
+    string? DestinationUrl,
+    string? PayloadJson,
+    string Status,
+    DateTime? ExpirationDate,
+    string? Notes,
+    int UserId);
+
 public record PlanEligibilityResult(bool Allowed, string Message);

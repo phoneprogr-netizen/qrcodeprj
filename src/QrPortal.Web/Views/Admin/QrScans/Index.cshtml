@@ -1,18 +1,6 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div><h2 class="mb-1">Scansioni</h2><p class="text-muted mb-0">Telemetria accessi per area geografica e device.</p></div>
-    <button class="btn btn-outline-secondary">Aggiorna</button>
-</div>
-<div class="row g-3 mb-3">
-    <div class="col-md-6"><div class="card border-0 shadow-sm"><div class="card-body"><h6>Top paesi</h6><ol class="mb-0"><li>Italia (64%)</li><li>Germania (12%)</li><li>Francia (9%)</li></ol></div></div></div>
-    <div class="col-md-6"><div class="card border-0 shadow-sm"><div class="card-body"><h6>Device</h6><ol class="mb-0"><li>Mobile (81%)</li><li>Desktop (14%)</li><li>Tablet (5%)</li></ol></div></div></div>
-</div>
-<div class="card border-0 shadow-sm"><div class="card-body">
-    <h6>Ultime scansioni</h6>
-    <table class="table table-sm mb-0">
-        <thead><tr><th>Ora</th><th>QR</th><th>IP</th><th>Paese</th><th>Device</th></tr></thead>
-        <tbody>
-            <tr><td>10:31:18</td><td>#10244</td><td>93.45.122.18</td><td>IT</td><td>iOS Safari</td></tr>
-            <tr><td>10:31:04</td><td>#10188</td><td>79.12.45.87</td><td>IT</td><td>Android Chrome</td></tr>
-        </tbody>
-    </table>
-</div></div>
+@model IEnumerable<QrPortal.DataAccess.Interfaces.QrScanListItem>
+<h2 class="mb-3">Scansioni QR</h2>
+<div class="card border-0 shadow-sm"><div class="table-responsive"><table class="table mb-0">
+<thead><tr><th>Data</th><th>Cliente</th><th>QR</th><th>IP</th><th>Località</th></tr></thead>
+<tbody>@foreach (var s in Model){<tr><td>@s.ScanDate:dd/MM/yyyy HH:mm</td><td>@s.ClientName</td><td>@s.QrTitle</td><td>@s.IpAddress</td><td>@s.City @s.Country</td></tr>}</tbody>
+</table></div></div>

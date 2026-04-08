@@ -1,16 +1,22 @@
+@model QrPortal.Web.ViewModels.CustomerQrCodeIndexVm
+
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <div><h2 class="mb-1">I miei QR Code</h2><p class="text-muted mb-0">Crea, gestisci e monitora i tuoi codici.</p></div>
+    <div><h2 class="mb-1">I miei QR Code</h2></div>
 </div>
 
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white"><strong>Crea nuovo QR</strong></div>
     <div class="card-body">
-        <form class="row g-3">
-                        <div class="col-md-6"><label class="form-label">Titolo</label><input name="Title" class="form-control" required /></div>
-            <div class="col-md-3"><label class="form-label">Tipo QR</label><select  class="form-select"><option value="1">URL</option><option value="2">PDF</option></select></div>
-            <div class="col-md-3"><label class="form-label">Stato</label><select  class="form-select"><option value="1">Attivo</option><option value="0">Bozza</option></select></div>
-            <div class="col-12"><label class="form-label">Contenuto</label><textarea  class="form-control" rows="3" placeholder="https://... oppure contenuto dinamico"></textarea></div>
-            <div class="col-12 d-flex justify-content-end"><button class="btn btn-primary" type="button">Genera QR</button></div>
+        <form asp-action="Create" method="post" class="row g-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Create.ClientId" />
+            <div class="col-md-4"><label class="form-label">Titolo</label><input asp-for="Create.Title" class="form-control" required /></div>
+            <div class="col-md-3"><label class="form-label">Tipo QR</label><select asp-for="Create.QrTypeId" class="form-select">@foreach (var t in Model.Types){<option value="@t.Id">@t.Name</option>}</select></div>
+            <div class="col-md-3"><label class="form-label">Categoria</label><select asp-for="Create.CategoryId" class="form-select"><option value="">-</option>@foreach (var c in Model.Categories){<option value="@c.Id">@c.Name</option>}</select></div>
+            <div class="col-md-2"><label class="form-label">Dinamico</label><input asp-for="Create.IsDynamic" type="checkbox" class="form-check-input ms-2" /></div>
+            <div class="col-12"><label class="form-label">URL destinazione</label><input asp-for="Create.DestinationUrl" class="form-control" placeholder="https://..." /></div>
+            <div class="col-12"><label class="form-label">Payload JSON</label><textarea asp-for="Create.PayloadJson" class="form-control" rows="2"></textarea></div>
+            <div class="col-12 d-flex justify-content-end"><button class="btn btn-primary" type="submit">Genera QR</button></div>
         </form>
     </div>
 </div>
@@ -18,10 +24,15 @@
 <div class="card border-0 shadow-sm">
     <div class="table-responsive">
         <table class="table table-hover mb-0">
-            <thead><tr><th>ID</th><th>Titolo</th><th>Tipo</th><th>Ultima modifica</th><th>Scansioni</th><th></th></tr></thead>
+            <thead><tr><th>ID</th><th>Titolo</th><th>Tipo</th><th>Stato</th><th>Scansioni</th><th></th></tr></thead>
             <tbody>
-                <tr><td>#10244</td><td>Menu estivo</td><td>URL</td><td>08/04/2026</td><td>1.224</td><td><a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="1">Apri</a></td></tr>
-                <tr><td>#10188</td><td>Catalogo 2026</td><td>PDF</td><td>07/04/2026</td><td>332</td><td><a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="2">Apri</a></td></tr>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>#@item.Id</td><td>@item.Title</td><td>@item.QrTypeName</td><td>@item.Status</td><td>@item.ScanCount</td>
+                        <td><a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@item.Id">Apri</a></td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>

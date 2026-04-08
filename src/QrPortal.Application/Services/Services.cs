@@ -159,6 +159,31 @@ public class QrCodeService(
         return await qrCodes.CreateAsync(qr);
     }
 
+    public async Task UpdateAsync(QrCodeUpdateRequest request)
+    {
+        var current = await qrCodes.GetByIdAsync(request.Id) ?? throw new InvalidOperationException("QR non trovato");
+        if (current.ClientId != request.ClientId) throw new InvalidOperationException("QR non appartenente al cliente");
+
+        var type = await qrTypes.GetByIdAsync(request.QrTypeId) ?? throw new InvalidOperationException("Tipo QR non trovato");
+        var payload = request.PayloadJson ?? "{}";
+        var valid = validator.Validate(type.Code, payload);
+        if (!valid.IsValid) throw new InvalidOperationException(valid.Error);
+
+        current.QrTypeId = request.QrTypeId;
+        current.CategoryId = request.CategoryId;
+        current.Title = request.Title;
+        current.Description = request.Description;
+        current.DestinationUrl = request.DestinationUrl;
+        current.PayloadJson = payload;
+        current.GeneratedContent = generator.GenerateContent(type.Code, payload, current.IsDynamic, current.ShortCode, request.DestinationUrl, "https://tuodominio.it/r");
+        current.Status = request.Status;
+        current.ExpirationDate = request.ExpirationDate;
+        current.Notes = request.Notes;
+        current.UpdatedBy = request.UserId;
+
+        await qrCodes.UpdateAsync(current);
+    }
+
     public async Task<QrCode?> GetByIdAsync(int id, int? clientId, bool isAdmin)
     {
         var qr = await qrCodes.GetByIdAsync(id);
@@ -167,6 +192,12 @@ public class QrCodeService(
     }
 
     public Task MarkDeletedAsync(int id, int clientId, int userId) => qrCodes.SoftDeleteAsync(id, clientId, userId);
+
+    public Task<IEnumerable<QrCodeListItem>> SearchAsync(int? clientId, bool isAdmin)
+    {
+        if (!isAdmin && !clientId.HasValue) throw new InvalidOperationException("ClientId richiesto");
+        return qrCodes.SearchAsync(clientId);
+    }
 
     private async Task<PlanEligibilityResult> FeatureCheck(int clientId, Func<SubscriptionPlan, bool> predicate, string message)
     {

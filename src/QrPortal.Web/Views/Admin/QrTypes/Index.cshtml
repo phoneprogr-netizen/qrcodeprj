@@ -1,13 +1,4 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div><h2 class="mb-1">Tipologie QR</h2><p class="text-muted mb-0">Gestione tipi statici/dinamici e template form.</p></div>
-    <button class="btn btn-primary">Nuova tipologia</button>
-</div>
-<div class="card border-0 shadow-sm"><div class="table-responsive">
-<table class="table mb-0">
-    <thead><tr><th>Nome</th><th>Categoria</th><th>Dinamico</th><th>Campi</th><th>Stato</th></tr></thead>
-    <tbody>
-        <tr><td>URL</td><td>Marketing</td><td>Sì</td><td>UrlDestinazione, UTM</td><td><span class="badge text-bg-success">Attivo</span></td></tr>
-        <tr><td>Wi-Fi</td><td>Utility</td><td>No</td><td>SSID, Password, Sicurezza</td><td><span class="badge text-bg-success">Attivo</span></td></tr>
-    </tbody>
-</table>
-</div></div>
+@model IEnumerable<QrPortal.Domain.Entities.QrType>
+<h2 class="mb-3">Tipologie QR</h2>
+<div class="card border-0 shadow-sm"><div class="table-responsive"><table class="table mb-0"><thead><tr><th>Codice</th><th>Nome</th><th>Categoria</th><th>Dinamico</th></tr></thead>
+<tbody>@foreach(var t in Model){<tr><td>@t.Code</td><td>@t.Name</td><td>@t.Category</td><td>@(t.IsDynamicSupported?"Sì":"No")</td></tr>}</tbody></table></div></div>

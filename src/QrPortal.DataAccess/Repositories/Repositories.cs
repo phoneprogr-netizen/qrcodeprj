@@ -68,6 +68,15 @@ public class RoleRepository(ISqlConnectionFactory factory) : IRoleRepository
 public class ClientRepository(ISqlConnectionFactory factory) : IClientRepository
 {
     public async Task<Client?> GetByIdAsync(int id) { using var cn = factory.Create(); return await cn.QueryFirstOrDefaultAsync<Client>("SELECT * FROM Clients WHERE Id=@id AND IsDeleted=0", new { id }); }
+    public async Task<Client?> GetByUserIdAsync(int userId)
+    {
+        using var cn = factory.Create();
+        const string sql = @"SELECT TOP 1 c.*
+FROM Users u
+INNER JOIN Clients c ON c.Id=u.ClientId
+WHERE u.Id=@userId AND u.IsDeleted=0 AND c.IsDeleted=0";
+        return await cn.QueryFirstOrDefaultAsync<Client>(sql, new { userId });
+    }
 
     public async Task<IEnumerable<ClientListItem>> SearchAsync(string? query, string? status, bool? isActive)
     {
@@ -181,6 +190,31 @@ public class ClientSubscriptionRepository(ISqlConnectionFactory factory) : IClie
 WHERE ClientId=@clientId AND Status='Active' AND (EndDate IS NULL OR EndDate >= CAST(GETUTCDATE() AS date))
 ORDER BY StartDate DESC", new { clientId });
     }
+
+    public async Task<IEnumerable<ClientSubscriptionListItem>> SearchAsync(int? clientId)
+    {
+        using var cn = factory.Create();
+        const string sql = @"SELECT cs.Id,
+       cs.ClientId,
+       c.CompanyName AS ClientName,
+       cs.SubscriptionPlanId,
+       sp.Name AS PlanName,
+       cs.StartDate,
+       cs.EndDate,
+       cs.Status
+FROM ClientSubscriptions cs
+INNER JOIN Clients c ON c.Id=cs.ClientId
+INNER JOIN SubscriptionPlans sp ON sp.Id=cs.SubscriptionPlanId
+WHERE (@clientId IS NULL OR cs.ClientId=@clientId)
+ORDER BY cs.StartDate DESC";
+        return await cn.QueryAsync<ClientSubscriptionListItem>(sql, new { clientId });
+    }
+
+    public async Task SetStatusAsync(int id, string status)
+    {
+        using var cn = factory.Create();
+        await cn.ExecuteAsync("UPDATE ClientSubscriptions SET Status=@status,UpdatedAt=SYSUTCDATETIME() WHERE Id=@id", new { id, status });
+    }
 }
 
 public class QrTypeRepository(ISqlConnectionFactory factory) : IQrTypeRepository
@@ -207,8 +241,50 @@ SELECT CAST(SCOPE_IDENTITY() AS int);";
         return await cn.ExecuteScalarAsync<int>(sql, q);
     }
     public async Task<QrCode?> GetByIdAsync(int id) { using var cn = factory.Create(); return await cn.QueryFirstOrDefaultAsync<QrCode>("SELECT * FROM QrCodes WHERE Id=@id AND IsDeleted=0", new { id }); }
+    public async Task<IEnumerable<QrCodeListItem>> SearchAsync(int? clientId)
+    {
+        using var cn = factory.Create();
+        const string sql = @"SELECT q.Id,
+       q.ClientId,
+       c.CompanyName AS ClientName,
+       q.QrTypeId,
+       t.Name AS QrTypeName,
+       q.Title,
+       q.IsDynamic,
+       q.Status,
+       q.ScanCount,
+       q.CreatedAt,
+       q.LastScanAt,
+       q.ExpirationDate
+FROM QrCodes q
+INNER JOIN Clients c ON c.Id=q.ClientId
+INNER JOIN QrTypes t ON t.Id=q.QrTypeId
+WHERE q.IsDeleted=0
+  AND (@clientId IS NULL OR q.ClientId=@clientId)
+ORDER BY q.CreatedAt DESC";
+        return await cn.QueryAsync<QrCodeListItem>(sql, new { clientId });
+    }
     public async Task<QrCode?> GetByShortCodeAsync(string shortCode) { using var cn = factory.Create(); return await cn.QueryFirstOrDefaultAsync<QrCode>("SELECT * FROM QrCodes WHERE ShortCode=@shortCode AND IsDeleted=0", new { shortCode }); }
     public async Task UpdateScanAsync(int id, DateTime when) { using var cn = factory.Create(); await cn.ExecuteAsync("UPDATE QrCodes SET ScanCount=ScanCount+1,LastScanAt=@when,UpdatedAt=@when WHERE Id=@id", new { id, when }); }
+    public async Task UpdateAsync(QrCode q)
+    {
+        using var cn = factory.Create();
+        const string sql = @"UPDATE QrCodes
+SET QrTypeId=@QrTypeId,
+    CategoryId=@CategoryId,
+    Title=@Title,
+    Description=@Description,
+    DestinationUrl=@DestinationUrl,
+    PayloadJson=@PayloadJson,
+    GeneratedContent=@GeneratedContent,
+    Status=@Status,
+    ExpirationDate=@ExpirationDate,
+    Notes=@Notes,
+    UpdatedAt=GETUTCDATE(),
+    UpdatedBy=@UpdatedBy
+WHERE Id=@Id AND ClientId=@ClientId AND IsDeleted=0";
+        await cn.ExecuteAsync(sql, q);
+    }
     public async Task SoftDeleteAsync(int id, int clientId, int userId) { using var cn = factory.Create(); await cn.ExecuteAsync("UPDATE QrCodes SET IsDeleted=1,UpdatedAt=GETUTCDATE(),UpdatedBy=@userId WHERE Id=@id AND ClientId=@clientId", new { id, clientId, userId }); }
 }
 
@@ -219,6 +295,27 @@ public class QrScanRepository(ISqlConnectionFactory factory) : IQrScanRepository
         using var cn = factory.Create();
         await cn.ExecuteAsync(@"INSERT INTO QrScans (QrCodeId,ClientId,ScanDate,IpAddress,UserAgent,Referrer,DeviceInfo,Country,City,CreatedAt)
 VALUES (@QrCodeId,@ClientId,@ScanDate,@IpAddress,@UserAgent,@Referrer,@DeviceInfo,@Country,@City,GETUTCDATE())", scan);
+    }
+
+    public async Task<IEnumerable<QrScanListItem>> SearchAsync(int? clientId, int take = 200)
+    {
+        using var cn = factory.Create();
+        const string sql = @"SELECT TOP (@take)
+       s.Id,
+       s.QrCodeId,
+       s.ClientId,
+       c.CompanyName AS ClientName,
+       q.Title AS QrTitle,
+       s.ScanDate,
+       s.IpAddress,
+       s.Country,
+       s.City
+FROM QrScans s
+INNER JOIN Clients c ON c.Id=s.ClientId
+INNER JOIN QrCodes q ON q.Id=s.QrCodeId
+WHERE (@clientId IS NULL OR s.ClientId=@clientId)
+ORDER BY s.ScanDate DESC";
+        return await cn.QueryAsync<QrScanListItem>(sql, new { clientId, take });
     }
 }
 
