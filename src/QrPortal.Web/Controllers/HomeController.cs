@@ -13,4 +13,7 @@ public class HomeController : Controller
     public IActionResult Register() => View();
 
     public IActionResult Demo() => View();
+
+    [Route("home/error")]
+    public IActionResult Error() => View();
 }
