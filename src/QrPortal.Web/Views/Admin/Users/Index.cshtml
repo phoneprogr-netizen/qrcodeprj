@@ -1,24 +1,137 @@
+@using QrPortal.Web.ViewModels
+@model UserIndexVm
+@{
+    var createVm = ViewData["CreateVm"] as UserFormVm ?? new UserFormVm();
+    var clients = ViewData["Clients"] as IEnumerable<QrPortal.DataAccess.Interfaces.ClientListItem> ?? Enumerable.Empty<QrPortal.DataAccess.Interfaces.ClientListItem>();
+    var generatedUsername = TempData["GeneratedUsername"] as string;
+    var generatedPassword = TempData["GeneratedPassword"] as string;
+}
+
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <div><h2 class="mb-1">Utenti amministrativi</h2><p class="text-muted mb-0">Gestione accessi backoffice e permessi.</p></div>
-    <button class="btn btn-primary">Nuovo utente admin</button>
+    <div><h2 class="mb-1">Utenti</h2><p class="text-muted mb-0">Gestione account Admin/SuperAdmin/Customer.</p></div>
+</div>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+@if (!string.IsNullOrWhiteSpace(generatedUsername) && !string.IsNullOrWhiteSpace(generatedPassword))
+{
+    <div class="modal fade" id="userCredentialsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Credenziali generate</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-1"><strong>Username:</strong> <code>@generatedUsername</code></p>
+                    <p class="mb-0"><strong>Password:</strong> <code>@generatedPassword</code></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = new bootstrap.Modal(document.getElementById("userCredentialsModal"));
+            modal.show();
+        });
+    </script>
+}
+
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+        <h5 class="mb-3">Crea nuovo utente</h5>
+        <form method="post" asp-action="Create" class="row g-2 align-items-end">
+            @Html.AntiForgeryToken()
+            <div class="col-md-2"><label asp-for="@createVm.Username" class="form-label">Username</label><input class="form-control" name="Username" value="@createVm.Username" /></div>
+            <div class="col-md-2"><label asp-for="@createVm.FullName" class="form-label">Nome</label><input class="form-control" name="FullName" value="@createVm.FullName" /></div>
+            <div class="col-md-2"><label asp-for="@createVm.Email" class="form-label">Email</label><input class="form-control" name="Email" value="@createVm.Email" /></div>
+            <div class="col-md-2"><label asp-for="@createVm.Phone" class="form-label">Telefono</label><input class="form-control" name="Phone" value="@createVm.Phone" /></div>
+            <div class="col-md-2">
+                <label class="form-label">Ruolo</label>
+                <select class="form-select" name="RoleId" id="roleId">
+                    @foreach (var role in Model.Roles.OrderBy(r => r.Id))
+                    {
+                        <option value="@role.Id" selected="@(createVm.RoleId == role.Id)">@role.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Cliente (se Customer)</label>
+                <select class="form-select" name="ClientId" id="clientId">
+                    <option value="">--</option>
+                    @foreach (var client in clients)
+                    {
+                        <option value="@client.Id" selected="@(createVm.ClientId == client.Id)">@client.CompanyName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2 form-check mt-4 ms-2"><input class="form-check-input" type="checkbox" name="IsActive" value="true" checked="@createVm.IsActive" /><label class="form-check-label">Attivo</label></div>
+            <div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Crea utente</button></div>
+        </form>
+        <div asp-validation-summary="ModelOnly" class="text-danger mt-2"></div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label">Cerca</label>
+                <input class="form-control" name="query" value="@Model.Query" placeholder="Nome, email o username" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Ruolo</label>
+                <select class="form-select" name="roleId">
+                    <option value="">Tutti</option>
+                    @foreach (var role in Model.Roles.OrderBy(r => r.Id))
+                    {
+                        <option value="@role.Id" selected="@(Model.RoleId == role.Id)">@role.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Abilitato</label>
+                <select class="form-select" name="isActive">
+                    <option value="">Tutti</option>
+                    <option value="true" selected="@(Model.IsActive == true)">Sì</option>
+                    <option value="false" selected="@(Model.IsActive == false)">No</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button class="btn btn-outline-secondary w-100" type="submit">Filtra</button>
+                <a class="btn btn-light border w-100" asp-action="Index">Reset</a>
+            </div>
+        </form>
+    </div>
 </div>
 
 <div class="card border-0 shadow-sm">
-    <div class="card-body">
-        <div class="row g-3 mb-3">
-            <div class="col-md-4"><input class="form-control" placeholder="Cerca per nome o email" /></div>
-            <div class="col-md-3"><select class="form-select"><option>Tutti i ruoli</option><option>SuperAdmin</option><option>Admin</option></select></div>
-            <div class="col-md-3"><select class="form-select"><option>Tutti gli stati</option><option>Attivo</option><option>Sospeso</option></select></div>
-            <div class="col-md-2"><button class="btn btn-outline-secondary w-100">Filtra</button></div>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-striped align-middle mb-0">
-                <thead><tr><th>Nome</th><th>Email</th><th>Ruolo</th><th>Ultimo accesso</th><th>Stato</th><th></th></tr></thead>
-                <tbody>
-                    <tr><td>Marco Bianchi</td><td>marco@qrportal.it</td><td>SuperAdmin</td><td>08/04/2026 09:15</td><td><span class="badge text-bg-success">Attivo</span></td><td><button class="btn btn-sm btn-outline-primary">Modifica</button></td></tr>
-                    <tr><td>Laura Neri</td><td>laura@qrportal.it</td><td>Admin</td><td>07/04/2026 18:41</td><td><span class="badge text-bg-success">Attivo</span></td><td><button class="btn btn-sm btn-outline-primary">Modifica</button></td></tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead><tr><th>Nome</th><th>Email</th><th>Ruolo</th><th>Cliente</th><th>Ultimo accesso</th><th>Stato</th></tr></thead>
+            <tbody>
+                @if (!Model.Items.Any())
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-4">Nessun utente trovato.</td></tr>
+                }
+                else
+                {
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.FullName <small class="text-muted d-block">@item.Username</small></td>
+                            <td>@item.Email</td>
+                            <td>@item.RoleName</td>
+                            <td>@(item.ClientName ?? "-")</td>
+                            <td>@(item.LastLoginAt?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                            <td><span class="badge @(item.IsActive ? "text-bg-success" : "text-bg-secondary")">@(item.IsActive ? "Attivo" : "Disabilitato")</span></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
     </div>
 </div>

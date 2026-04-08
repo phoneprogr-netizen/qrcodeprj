@@ -18,10 +18,13 @@
             </select>
         </div>
         <div class="col-md-3 form-check mt-5 ms-2"><input asp-for="IsActive" class="form-check-input" /><label asp-for="IsActive" class="form-check-label"></label></div>
+        <div class="col-md-8 form-check ms-2">
+            <input asp-for="CreateDefaultCustomerUser" class="form-check-input" />
+            <label asp-for="CreateDefaultCustomerUser" class="form-check-label">Crea automaticamente un utente Customer con l'email del cliente</label>
+        </div>
     </div>
     <div class="card-footer bg-white d-flex gap-2 justify-content-end">
         <a asp-action="Index" class="btn btn-light border">Annulla</a>
         <button type="submit" class="btn btn-primary">Salva cliente</button>
     </div>
 </form>
-

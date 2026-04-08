@@ -12,11 +12,57 @@ public class UserRepository(ISqlConnectionFactory factory) : IUserRepository
         using var cn = factory.Create();
         return await cn.QueryFirstOrDefaultAsync<User>("SELECT TOP 1 * FROM Users WHERE Username=@username AND IsDeleted=0", new { username });
     }
+
+    public async Task<IEnumerable<UserListItem>> SearchAsync(string? query, int? roleId, bool? isActive)
+    {
+        using var cn = factory.Create();
+        const string sql = @"SELECT u.Id,
+       u.ClientId,
+       u.Username,
+       u.FullName,
+       u.Email,
+       u.RoleId,
+       r.Name AS RoleName,
+       c.CompanyName AS ClientName,
+       u.IsActive,
+       u.LastLoginAt
+FROM Users u
+INNER JOIN Roles r ON r.Id=u.RoleId
+LEFT JOIN Clients c ON c.Id=u.ClientId
+WHERE u.IsDeleted=0
+  AND (@query IS NULL OR u.FullName LIKE '%' + @query + '%' OR u.Email LIKE '%' + @query + '%' OR u.Username LIKE '%' + @query + '%')
+  AND (@roleId IS NULL OR u.RoleId=@roleId)
+  AND (@isActive IS NULL OR u.IsActive=@isActive)
+ORDER BY u.FullName, u.Username";
+        return await cn.QueryAsync<UserListItem>(sql, new { query, roleId, isActive });
+    }
+
+    public async Task<int> CreateAsync(User user)
+    {
+        using var cn = factory.Create();
+        const string sql = @"INSERT INTO Users
+(ClientId,Username,PasswordHash,FullName,Email,Phone,RoleId,IsActive,CreatedAt,UpdatedAt,IsDeleted)
+VALUES
+(@ClientId,@Username,@PasswordHash,@FullName,@Email,@Phone,@RoleId,@IsActive,SYSUTCDATETIME(),SYSUTCDATETIME(),0);
+SELECT CAST(SCOPE_IDENTITY() AS int);";
+        return await cn.ExecuteScalarAsync<int>(sql, user);
+    }
+
+    public async Task<int> CountByClientIdAsync(int clientId)
+    {
+        using var cn = factory.Create();
+        return await cn.ExecuteScalarAsync<int>("SELECT COUNT(1) FROM Users WHERE ClientId=@clientId AND IsDeleted=0", new { clientId });
+    }
 }
 
 public class RoleRepository(ISqlConnectionFactory factory) : IRoleRepository
 {
     public async Task<IEnumerable<Role>> GetAllAsync() { using var cn = factory.Create(); return await cn.QueryAsync<Role>("SELECT * FROM Roles WHERE IsActive=1"); }
+    public async Task<Role?> GetByNameAsync(string name)
+    {
+        using var cn = factory.Create();
+        return await cn.QueryFirstOrDefaultAsync<Role>("SELECT TOP 1 * FROM Roles WHERE Name=@name AND IsActive=1", new { name });
+    }
 }
 
 public class ClientRepository(ISqlConnectionFactory factory) : IClientRepository
