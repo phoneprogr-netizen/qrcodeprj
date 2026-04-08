@@ -210,6 +210,17 @@ ORDER BY cs.StartDate DESC";
         return await cn.QueryAsync<ClientSubscriptionListItem>(sql, new { clientId });
     }
 
+    public async Task<int> CreateAsync(ClientSubscription subscription)
+    {
+        using var cn = factory.Create();
+        const string sql = @"INSERT INTO ClientSubscriptions
+(ClientId,SubscriptionPlanId,StartDate,EndDate,Status,Notes,CreatedAt,UpdatedAt)
+VALUES
+(@ClientId,@SubscriptionPlanId,@StartDate,@EndDate,@Status,@Notes,SYSUTCDATETIME(),SYSUTCDATETIME());
+SELECT CAST(SCOPE_IDENTITY() AS int);";
+        return await cn.ExecuteScalarAsync<int>(sql, subscription);
+    }
+
     public async Task SetStatusAsync(int id, string status)
     {
         using var cn = factory.Create();

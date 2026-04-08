@@ -227,3 +227,43 @@ public class CustomerQrCodeFormVm
         Notes = qr.Notes
     };
 }
+
+public class ClientSubscriptionIndexVm
+{
+    public int? ClientId { get; set; }
+    public ClientSubscriptionCreateVm Create { get; set; } = new();
+    public IEnumerable<ClientListItem> Clients { get; set; } = [];
+    public IEnumerable<SubscriptionPlan> Plans { get; set; } = [];
+    public IEnumerable<ClientSubscriptionListItem> Items { get; set; } = [];
+}
+
+public class ClientSubscriptionCreateVm
+{
+    [Required]
+    public int ClientId { get; set; }
+
+    [Required]
+    public int SubscriptionPlanId { get; set; }
+
+    [DataType(DataType.Date)]
+    public DateTime StartDate { get; set; } = DateTime.UtcNow.Date;
+
+    [DataType(DataType.Date)]
+    public DateTime? EndDate { get; set; }
+
+    [Required, StringLength(20)]
+    public string Status { get; set; } = "Active";
+
+    [StringLength(1000)]
+    public string? Notes { get; set; }
+
+    public ClientSubscription ToEntity() => new()
+    {
+        ClientId = ClientId,
+        SubscriptionPlanId = SubscriptionPlanId,
+        StartDate = StartDate,
+        EndDate = EndDate,
+        Status = Status.Trim(),
+        Notes = Notes?.Trim()
+    };
+}
