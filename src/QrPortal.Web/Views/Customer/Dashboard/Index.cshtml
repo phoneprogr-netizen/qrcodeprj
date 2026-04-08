@@ -13,7 +13,7 @@
 
 <div class="row g-3 mb-4">
     <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">Piano attivo</small><h4 class="mb-0">@(plan?.Name ?? "Nessuno")</h4></div></div></div>
-    <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">QR attivi</small><h4 class="mb-0">@qrCount / @(plan?.MaxQrCodes?.ToString() ?? "-")</h4></div></div></div>
+    <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">QR attivi</small><h4 class="mb-0">@qrCount / @(plan is null ? "-" : plan.MaxQrCodes.ToString())</h4></div></div></div>
     <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">Scadenza abbonamento</small><h4 class="mb-0">@(sub?.EndDate?.ToString("dd/MM/yyyy") ?? "-" )</h4></div></div></div>
 </div>
 
