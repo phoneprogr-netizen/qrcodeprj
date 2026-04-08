@@ -1,9 +1,72 @@
+@model QrPortal.Web.ViewModels.PlanIndexVm
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div><h2 class="mb-1">Piani</h2><p class="text-muted mb-0">Configurazione limiti e prezzi.</p></div>
-    <button class="btn btn-primary">Nuovo piano</button>
+    <a class="btn btn-primary" asp-action="Create">Nuovo piano</a>
 </div>
-<div class="row g-3">
-    <div class="col-md-4"><div class="card border-0 shadow-sm h-100"><div class="card-body"><h5>Starter</h5><p class="text-muted">Per piccoli business</p><ul><li>100 QR</li><li>1 utente</li><li>Supporto email</li></ul><strong>€19/mese</strong></div></div></div>
-    <div class="col-md-4"><div class="card border-0 shadow-sm h-100"><div class="card-body"><h5>Business</h5><p class="text-muted">Per PMI in crescita</p><ul><li>2.500 QR</li><li>5 utenti</li><li>Analytics avanzate</li></ul><strong>€79/mese</strong></div></div></div>
-    <div class="col-md-4"><div class="card border-0 shadow-sm h-100"><div class="card-body"><h5>Enterprise</h5><p class="text-muted">Per grandi volumi</p><ul><li>QR illimitati</li><li>SSO + API</li><li>Account manager</li></ul><strong>Custom</strong></div></div></div>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-8">
+                <label class="form-label">Cerca</label>
+                <input class="form-control" name="query" value="@Model.Query" placeholder="Nome o descrizione piano" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Stato</label>
+                <select class="form-select" name="isActive">
+                    <option value="">Tutti</option>
+                    <option value="true" selected="@(Model.IsActive == true)">Attivi</option>
+                    <option value="false" selected="@(Model.IsActive == false)">Disattivi</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button class="btn btn-outline-secondary w-100" type="submit">Filtra</button>
+                <a class="btn btn-light border w-100" asp-action="Index">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead>
+                <tr><th>Nome</th><th>Prezzo</th><th>QR max</th><th>Utenti max</th><th>Funzionalità</th><th>Stato</th><th></th></tr>
+            </thead>
+            <tbody>
+            @if (!Model.Items.Any())
+            {
+                <tr><td colspan="7" class="text-center text-muted py-4">Nessun piano trovato.</td></tr>
+            }
+            else
+            {
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">@item.Name</div>
+                            <small class="text-muted">@item.Description</small>
+                        </td>
+                        <td>@(item.Price.HasValue ? $"€{item.Price:0.00}" : "Custom")</td>
+                        <td>@item.MaxQrCodes</td>
+                        <td>@(item.MaxUsers?.ToString() ?? "-")</td>
+                        <td>
+                            @(item.AllowDynamicQr ? "Dinamico " : "")
+                            @(item.AllowTracking ? "Tracking " : "")
+                            @(item.AllowMultiLink ? "Multi-link" : "")
+                        </td>
+                        <td><span class="badge @(item.IsActive ? "text-bg-success" : "text-bg-secondary")">@(item.IsActive ? "Attivo" : "Disattivo")</span></td>
+                        <td class="text-end"><a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@item.Id">Modifica</a></td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
 </div>

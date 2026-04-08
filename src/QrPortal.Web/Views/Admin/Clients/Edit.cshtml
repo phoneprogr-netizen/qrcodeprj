@@ -1,0 +1,28 @@
+@model QrPortal.Web.ViewModels.ClientFormVm
+
+<h2 class="mb-3">Modifica cliente</h2>
+
+<form method="post" class="card border-0 shadow-sm">
+    <input asp-for="Id" type="hidden" />
+    <div class="card-body row g-3">
+        <div class="col-md-6"><label asp-for="CompanyName" class="form-label"></label><input asp-for="CompanyName" class="form-control" /><span asp-validation-for="CompanyName" class="text-danger"></span></div>
+        <div class="col-md-3"><label asp-for="VatNumber" class="form-label"></label><input asp-for="VatNumber" class="form-control" /></div>
+        <div class="col-md-3"><label asp-for="TaxCode" class="form-label"></label><input asp-for="TaxCode" class="form-control" /></div>
+        <div class="col-md-6"><label asp-for="ContactName" class="form-label"></label><input asp-for="ContactName" class="form-control" /><span asp-validation-for="ContactName" class="text-danger"></span></div>
+        <div class="col-md-3"><label asp-for="Email" class="form-label"></label><input asp-for="Email" class="form-control" /><span asp-validation-for="Email" class="text-danger"></span></div>
+        <div class="col-md-3"><label asp-for="Phone" class="form-label"></label><input asp-for="Phone" class="form-control" /></div>
+        <div class="col-md-3"><label asp-for="Status" class="form-label"></label>
+            <select asp-for="Status" class="form-select">
+                <option value="Active">Attivo</option>
+                <option value="Trial">In prova</option>
+                <option value="Suspended">Sospeso</option>
+            </select>
+        </div>
+        <div class="col-md-3 form-check mt-5 ms-2"><input asp-for="IsActive" class="form-check-input" /><label asp-for="IsActive" class="form-check-label"></label></div>
+    </div>
+    <div class="card-footer bg-white d-flex gap-2 justify-content-end">
+        <a asp-action="Index" class="btn btn-light border">Annulla</a>
+        <button type="submit" class="btn btn-primary">Salva modifiche</button>
+    </div>
+</form>
+

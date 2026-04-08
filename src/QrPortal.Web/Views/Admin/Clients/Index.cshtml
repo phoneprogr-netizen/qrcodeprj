@@ -1,14 +1,77 @@
+@model QrPortal.Web.ViewModels.ClientIndexVm
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div><h2 class="mb-1">Clienti</h2><p class="text-muted mb-0">Anagrafica aziende e stato account.</p></div>
-    <button class="btn btn-primary">Nuovo cliente</button>
+    <a class="btn btn-primary" asp-action="Create">Nuovo cliente</a>
 </div>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label">Cerca</label>
+                <input class="form-control" name="query" value="@Model.Query" placeholder="Azienda, email o P.IVA" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Stato</label>
+                <select class="form-select" name="status">
+                    <option value="">Tutti</option>
+                    <option value="Active" selected="@(Model.Status == "Active")">Attivo</option>
+                    <option value="Trial" selected="@(Model.Status == "Trial")">In prova</option>
+                    <option value="Suspended" selected="@(Model.Status == "Suspended")">Sospeso</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Abilitato</label>
+                <select class="form-select" name="isActive">
+                    <option value="">Tutti</option>
+                    <option value="true" selected="@(Model.IsActive == true)">Sì</option>
+                    <option value="false" selected="@(Model.IsActive == false)">No</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button class="btn btn-outline-secondary w-100" type="submit">Filtra</button>
+                <a class="btn btn-light border w-100" asp-action="Index">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card border-0 shadow-sm">
     <div class="table-responsive">
-        <table class="table table-hover mb-0">
+        <table class="table table-hover mb-0 align-middle">
             <thead><tr><th>Azienda</th><th>P.IVA</th><th>Piano</th><th>QR attivi</th><th>Stato</th><th></th></tr></thead>
             <tbody>
-                <tr><td>Rossi SRL</td><td>IT12345678901</td><td>Business</td><td>412</td><td><span class="badge text-bg-success">Attivo</span></td><td><a class="btn btn-sm btn-outline-secondary">Dettaglio</a></td></tr>
-                <tr><td>Caffè Milano</td><td>IT98765432109</td><td>Starter</td><td>58</td><td><span class="badge text-bg-warning">In prova</span></td><td><a class="btn btn-sm btn-outline-secondary">Dettaglio</a></td></tr>
+                @if (!Model.Items.Any())
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-4">Nessun cliente trovato con i filtri selezionati.</td></tr>
+                }
+                else
+                {
+                    @foreach (var item in Model.Items)
+                    {
+                        var badgeClass = item.Status switch
+                        {
+                            "Active" => "text-bg-success",
+                            "Trial" => "text-bg-warning",
+                            "Suspended" => "text-bg-danger",
+                            _ => "text-bg-secondary"
+                        };
+                        <tr>
+                            <td>@item.CompanyName</td>
+                            <td>@(string.IsNullOrWhiteSpace(item.VatNumber) ? "-" : item.VatNumber)</td>
+                            <td>@(item.CurrentPlanName ?? "-")</td>
+                            <td>@item.ActiveQrCount</td>
+                            <td><span class="badge @badgeClass">@item.Status</span></td>
+                            <td class="text-end"><a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@item.Id">Modifica</a></td>
+                        </tr>
+                    }
+                }
             </tbody>
         </table>
     </div>
