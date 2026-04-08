@@ -1,3 +1,23 @@
-@{ Layout = "_Layout"; }
-<div class="alert alert-info">Area Cliente</div>
-@RenderBody()
+@{
+    Layout = "_Layout";
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+
+<div class="d-flex flex-column flex-lg-row gap-4 align-items-start">
+    <aside class="col-12 col-lg-3 col-xl-2">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Area Cliente</h5>
+                <div class="list-group list-group-flush">
+                    <a class="list-group-item list-group-item-action @(currentController == "Dashboard" ? "active" : "")" asp-area="Customer" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                    <a class="list-group-item list-group-item-action @(currentController == "QrCodes" ? "active" : "")" asp-area="Customer" asp-controller="QrCodes" asp-action="Index">I miei QR</a>
+                    <a class="list-group-item list-group-item-action @(currentController == "Profile" ? "active" : "")" asp-area="Customer" asp-controller="Profile" asp-action="Index">Profilo azienda</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <section class="flex-grow-1 w-100">
+        @RenderBody()
+    </section>
+</div>

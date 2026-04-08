@@ -1,3 +1,29 @@
-@{ Layout = "_Layout"; }
-<div class="alert alert-dark">Area Admin</div>
-@RenderBody()
+@{
+    Layout = "_Layout";
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+
+<div class="d-flex flex-column flex-lg-row gap-4 align-items-start">
+    <aside class="col-12 col-lg-3 col-xl-2">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Area Admin</h5>
+                <div class="list-group list-group-flush">
+                    <a class="list-group-item list-group-item-action @(currentController == "Dashboard" ? "active" : "")" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                    <a class="list-group-item list-group-item-action @(currentController == "Users" ? "active" : "")" asp-area="Admin" asp-controller="Users" asp-action="Index">Utenti</a>
+                    <a class="list-group-item list-group-item-action @(currentController == "Clients" ? "active" : "")" asp-area="Admin" asp-controller="Clients" asp-action="Index">Clienti</a>
+                    <a class="list-group-item list-group-item-action @(currentController == "ClientSubscriptions" ? "active" : "")" asp-area="Admin" asp-controller="ClientSubscriptions" asp-action="Index">Abbonamenti</a>
+                    <a class="list-group-item list-group-item-action @(currentController == "Plans" ? "active" : "")" asp-area="Admin" asp-controller="Plans" asp-action="Index">Piani</a>
+                    <a class="list-group-item list-group-item-action @(currentController == "QrCategories" ? "active" : "")" asp-area="Admin" asp-controller="QrCategories" asp-action="Index">Categorie QR</a>
+                    <a class="list-group-item list-group-item-action @(currentController == "QrTypes" ? "active" : "")" asp-area="Admin" asp-controller="QrTypes" asp-action="Index">Tipologie QR</a>
+                    <a class="list-group-item list-group-item-action @(currentController == "QrCodes" ? "active" : "")" asp-area="Admin" asp-controller="QrCodes" asp-action="Index">QR Codes</a>
+                    <a class="list-group-item list-group-item-action @(currentController == "QrScans" ? "active" : "")" asp-area="Admin" asp-controller="QrScans" asp-action="Index">Scansioni</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <section class="flex-grow-1 w-100">
+        @RenderBody()
+    </section>
+</div>

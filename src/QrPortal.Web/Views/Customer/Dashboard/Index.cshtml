@@ -1,1 +1,26 @@
-<h2>Dashboard Cliente</h2><p>Stato piano, limiti QR, scansioni e top QR.</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">Dashboard cliente</h2>
+        <p class="text-muted mb-0">Controlla piano, consumo e performance dei tuoi QR.</p>
+    </div>
+    <a class="btn btn-primary" asp-area="Customer" asp-controller="QrCodes" asp-action="Index">Crea nuovo QR</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">Piano attivo</small><h4 class="mb-0">Business</h4></div></div></div>
+    <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">QR usati / limite</small><h4 class="mb-0">412 / 2.500</h4></div></div></div>
+    <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body"><small class="text-muted">Scansioni mese</small><h4 class="mb-0">8.901</h4></div></div></div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white"><strong>Top QR (ultimi 30 giorni)</strong></div>
+    <div class="table-responsive">
+        <table class="table mb-0">
+            <thead><tr><th>Titolo</th><th>Tipo</th><th>Scansioni</th><th></th></tr></thead>
+            <tbody>
+                <tr><td>Catalogo primavera</td><td>PDF</td><td>3.210</td><td><a class="btn btn-sm btn-outline-primary" asp-area="Customer" asp-controller="QrCodes" asp-action="Details" asp-route-id="1">Dettagli</a></td></tr>
+                <tr><td>Menu lunch</td><td>URL dinamico</td><td>1.876</td><td><a class="btn btn-sm btn-outline-primary" asp-area="Customer" asp-controller="QrCodes" asp-action="Details" asp-route-id="2">Dettagli</a></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
