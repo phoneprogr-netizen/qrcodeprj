@@ -22,12 +22,108 @@ public class RoleRepository(ISqlConnectionFactory factory) : IRoleRepository
 public class ClientRepository(ISqlConnectionFactory factory) : IClientRepository
 {
     public async Task<Client?> GetByIdAsync(int id) { using var cn = factory.Create(); return await cn.QueryFirstOrDefaultAsync<Client>("SELECT * FROM Clients WHERE Id=@id AND IsDeleted=0", new { id }); }
+
+    public async Task<IEnumerable<ClientListItem>> SearchAsync(string? query, string? status, bool? isActive)
+    {
+        using var cn = factory.Create();
+        const string sql = @"SELECT c.Id,
+       c.CompanyName,
+       c.VatNumber,
+       c.Status,
+       c.IsActive,
+       p.Name AS CurrentPlanName,
+       (SELECT COUNT(1) FROM QrCodes q WHERE q.ClientId=c.Id AND q.IsDeleted=0) AS ActiveQrCount
+FROM Clients c
+OUTER APPLY (
+    SELECT TOP 1 sp.Name
+    FROM ClientSubscriptions cs
+    INNER JOIN SubscriptionPlans sp ON sp.Id=cs.SubscriptionPlanId
+    WHERE cs.ClientId=c.Id
+    ORDER BY cs.StartDate DESC
+) p
+WHERE c.IsDeleted=0
+  AND (@query IS NULL OR c.CompanyName LIKE '%' + @query + '%' OR c.Email LIKE '%' + @query + '%' OR c.VatNumber LIKE '%' + @query + '%')
+  AND (@status IS NULL OR c.Status = @status)
+  AND (@isActive IS NULL OR c.IsActive = @isActive)
+ORDER BY c.CompanyName";
+        return await cn.QueryAsync<ClientListItem>(sql, new { query, status, isActive });
+    }
+
+    public async Task<int> CreateAsync(Client client)
+    {
+        using var cn = factory.Create();
+        const string sql = @"INSERT INTO Clients (CompanyName,VatNumber,TaxCode,ContactName,Email,Phone,Status,IsActive,CreatedAt,UpdatedAt,IsDeleted)
+VALUES (@CompanyName,@VatNumber,@TaxCode,@ContactName,@Email,@Phone,@Status,@IsActive,SYSUTCDATETIME(),SYSUTCDATETIME(),0);
+SELECT CAST(SCOPE_IDENTITY() AS int);";
+        return await cn.ExecuteScalarAsync<int>(sql, client);
+    }
+
+    public async Task UpdateAsync(Client client)
+    {
+        using var cn = factory.Create();
+        const string sql = @"UPDATE Clients
+SET CompanyName=@CompanyName,
+    VatNumber=@VatNumber,
+    TaxCode=@TaxCode,
+    ContactName=@ContactName,
+    Email=@Email,
+    Phone=@Phone,
+    Status=@Status,
+    IsActive=@IsActive,
+    UpdatedAt=SYSUTCDATETIME()
+WHERE Id=@Id AND IsDeleted=0";
+        await cn.ExecuteAsync(sql, client);
+    }
 }
 
 public class SubscriptionPlanRepository(ISqlConnectionFactory factory) : ISubscriptionPlanRepository
 {
     public async Task<SubscriptionPlan?> GetByIdAsync(int id) { using var cn = factory.Create(); return await cn.QueryFirstOrDefaultAsync<SubscriptionPlan>("SELECT * FROM SubscriptionPlans WHERE Id=@id", new { id }); }
     public async Task<IEnumerable<SubscriptionPlan>> GetActiveAsync() { using var cn = factory.Create(); return await cn.QueryAsync<SubscriptionPlan>("SELECT * FROM SubscriptionPlans WHERE IsActive=1"); }
+
+    public async Task<IEnumerable<SubscriptionPlan>> SearchAsync(string? query, bool? isActive)
+    {
+        using var cn = factory.Create();
+        const string sql = @"SELECT *
+FROM SubscriptionPlans
+WHERE (@query IS NULL OR Name LIKE '%' + @query + '%' OR Description LIKE '%' + @query + '%')
+  AND (@isActive IS NULL OR IsActive=@isActive)
+ORDER BY Price, Name";
+        return await cn.QueryAsync<SubscriptionPlan>(sql, new { query, isActive });
+    }
+
+    public async Task<int> CreateAsync(SubscriptionPlan plan)
+    {
+        using var cn = factory.Create();
+        const string sql = @"INSERT INTO SubscriptionPlans
+(Name,Description,MaxQrCodes,AllowDynamicQr,AllowTracking,MaxMonthlyScans,MaxUsers,AllowExport,AllowMultiLink,AllowCustomBranding,Price,DurationMonths,IsActive,CreatedAt,UpdatedAt)
+VALUES
+(@Name,@Description,@MaxQrCodes,@AllowDynamicQr,@AllowTracking,@MaxMonthlyScans,@MaxUsers,@AllowExport,@AllowMultiLink,@AllowCustomBranding,@Price,@DurationMonths,@IsActive,SYSUTCDATETIME(),SYSUTCDATETIME());
+SELECT CAST(SCOPE_IDENTITY() AS int);";
+        return await cn.ExecuteScalarAsync<int>(sql, plan);
+    }
+
+    public async Task UpdateAsync(SubscriptionPlan plan)
+    {
+        using var cn = factory.Create();
+        const string sql = @"UPDATE SubscriptionPlans
+SET Name=@Name,
+    Description=@Description,
+    MaxQrCodes=@MaxQrCodes,
+    AllowDynamicQr=@AllowDynamicQr,
+    AllowTracking=@AllowTracking,
+    MaxMonthlyScans=@MaxMonthlyScans,
+    MaxUsers=@MaxUsers,
+    AllowExport=@AllowExport,
+    AllowMultiLink=@AllowMultiLink,
+    AllowCustomBranding=@AllowCustomBranding,
+    Price=@Price,
+    DurationMonths=@DurationMonths,
+    IsActive=@IsActive,
+    UpdatedAt=SYSUTCDATETIME()
+WHERE Id=@Id";
+        await cn.ExecuteAsync(sql, plan);
+    }
 }
 
 public class ClientSubscriptionRepository(ISqlConnectionFactory factory) : IClientSubscriptionRepository

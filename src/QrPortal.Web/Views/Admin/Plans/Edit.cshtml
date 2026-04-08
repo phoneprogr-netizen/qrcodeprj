@@ -1,0 +1,28 @@
+@model QrPortal.Web.ViewModels.PlanFormVm
+
+<h2 class="mb-3">Modifica piano</h2>
+
+<form method="post" class="card border-0 shadow-sm">
+    <input asp-for="Id" type="hidden" />
+    <div class="card-body row g-3">
+        <div class="col-md-6"><label asp-for="Name" class="form-label"></label><input asp-for="Name" class="form-control" /><span asp-validation-for="Name" class="text-danger"></span></div>
+        <div class="col-md-6"><label asp-for="Description" class="form-label"></label><input asp-for="Description" class="form-control" /></div>
+        <div class="col-md-3"><label asp-for="MaxQrCodes" class="form-label"></label><input asp-for="MaxQrCodes" class="form-control" type="number" min="1" /></div>
+        <div class="col-md-3"><label asp-for="MaxUsers" class="form-label"></label><input asp-for="MaxUsers" class="form-control" type="number" min="1" /></div>
+        <div class="col-md-3"><label asp-for="MaxMonthlyScans" class="form-label"></label><input asp-for="MaxMonthlyScans" class="form-control" type="number" min="1" /></div>
+        <div class="col-md-3"><label asp-for="DurationMonths" class="form-label"></label><input asp-for="DurationMonths" class="form-control" type="number" min="1" /></div>
+        <div class="col-md-3"><label asp-for="Price" class="form-label"></label><input asp-for="Price" class="form-control" type="number" step="0.01" min="0" /></div>
+        <div class="col-md-9 d-flex flex-wrap gap-3 align-items-center mt-4">
+            <div class="form-check"><input asp-for="AllowDynamicQr" class="form-check-input" /><label asp-for="AllowDynamicQr" class="form-check-label"></label></div>
+            <div class="form-check"><input asp-for="AllowTracking" class="form-check-input" /><label asp-for="AllowTracking" class="form-check-label"></label></div>
+            <div class="form-check"><input asp-for="AllowExport" class="form-check-input" /><label asp-for="AllowExport" class="form-check-label"></label></div>
+            <div class="form-check"><input asp-for="AllowMultiLink" class="form-check-input" /><label asp-for="AllowMultiLink" class="form-check-label"></label></div>
+            <div class="form-check"><input asp-for="AllowCustomBranding" class="form-check-input" /><label asp-for="AllowCustomBranding" class="form-check-label"></label></div>
+            <div class="form-check"><input asp-for="IsActive" class="form-check-input" /><label asp-for="IsActive" class="form-check-label"></label></div>
+        </div>
+    </div>
+    <div class="card-footer bg-white d-flex gap-2 justify-content-end">
+        <a asp-action="Index" class="btn btn-light border">Annulla</a>
+        <button type="submit" class="btn btn-primary">Salva modifiche</button>
+    </div>
+</form>
