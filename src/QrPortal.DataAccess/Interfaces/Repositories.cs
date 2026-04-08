@@ -34,6 +34,7 @@ public interface IClientSubscriptionRepository
 {
     Task<ClientSubscription?> GetActiveByClientIdAsync(int clientId);
     Task<IEnumerable<ClientSubscriptionListItem>> SearchAsync(int? clientId);
+    Task<int> CreateAsync(ClientSubscription subscription);
     Task SetStatusAsync(int id, string status);
 }
 public interface IQrTypeRepository { Task<QrType?> GetByIdAsync(int id); Task<QrType?> GetByCodeAsync(string code); Task<IEnumerable<QrType>> GetActiveAsync(); }

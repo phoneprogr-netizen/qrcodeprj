@@ -1,22 +1,19 @@
-<section class="p-5 mb-4 bg-light rounded-3">
-    <div class="container-fluid py-4">
-        <h1 class="display-5 fw-bold">QR Portal Web</h1>
-        <p class="col-lg-8 fs-5">
-            Gestisci QR dinamici, pagine di destinazione, tracciamento scansioni e campagne marketing
-            da un unico pannello semplice da usare.
-        </p>
-        <div class="d-flex flex-wrap gap-2 mt-3">
-            <a class="btn btn-primary btn-lg" asp-controller="Home" asp-action="Register">Registrati</a>
-            <a class="btn btn-outline-primary btn-lg" asp-controller="Home" asp-action="Demo">Prova la demo</a>
-            <a class="btn btn-dark btn-lg" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Area Admin</a>
-            <a class="btn btn-success btn-lg" asp-controller="Auth" asp-action="Login">Sei già cliente? Accedi</a>
-        </div>
+<section class="page-banner">
+    <h1 class="display-5 fw-bold">QR Portal Web</h1>
+    <p class="fs-5">
+        Crea, monitora e ottimizza campagne QR con una piattaforma moderna pensata per far crescere clienti e conversioni.
+    </p>
+    <div class="d-flex flex-wrap gap-2 mt-4">
+        <a class="btn btn-light btn-lg" asp-controller="Home" asp-action="Register">Registrati</a>
+        <a class="btn btn-outline-light btn-lg" asp-controller="Home" asp-action="Demo">Prova la demo</a>
+        <a class="btn btn-dark btn-lg" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Area Admin</a>
+        <a class="btn btn-success btn-lg" asp-controller="Auth" asp-action="Login">Sei già cliente? Accedi</a>
     </div>
 </section>
 
 <section class="row g-4">
     <div class="col-md-4">
-        <div class="card h-100">
+        <div class="card h-100 feature-card">
             <div class="card-body">
                 <h5 class="card-title">QR dinamici</h5>
                 <p class="card-text">Aggiorna contenuti e destinazioni senza ristampare i codici.</p>
@@ -24,7 +21,7 @@
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card h-100">
+        <div class="card h-100 feature-card">
             <div class="card-body">
                 <h5 class="card-title">Analitiche scansioni</h5>
                 <p class="card-text">Monitora risultati per data, dispositivo e origine del traffico.</p>
@@ -32,7 +29,7 @@
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card h-100">
+        <div class="card h-100 feature-card">
             <div class="card-body">
                 <h5 class="card-title">Gestione clienti</h5>
                 <p class="card-text">Piani, utenti e permessi in un backoffice pronto per scalare.</p>

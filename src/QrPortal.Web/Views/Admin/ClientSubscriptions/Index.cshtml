@@ -1,20 +1,84 @@
-@model IEnumerable<QrPortal.DataAccess.Interfaces.ClientSubscriptionListItem>
+@model QrPortal.Web.ViewModels.ClientSubscriptionIndexVm
+@using Microsoft.AspNetCore.Mvc.Rendering
+
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <div><h2 class="mb-1">Abbonamenti clienti</h2></div>
+    <div>
+        <h2 class="mb-1">Abbonamenti clienti</h2>
+        <p class="text-muted mb-0">Assegna o aggiorna i piani per i clienti già esistenti.</p>
+    </div>
 </div>
+
+@if (TempData["SuccessMessage"] is string message)
+{
+    <div class="alert alert-success">@message</div>
+}
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3">Nuovo abbonamento</h5>
+        <form asp-action="Create" method="post" class="row g-3">
+            @Html.AntiForgeryToken()
+            <div class="col-md-4">
+                <label asp-for="Create.ClientId" class="form-label">Cliente</label>
+                <select asp-for="Create.ClientId" class="form-select" asp-items='new SelectList(Model.Clients, "Id", "CompanyName")'>
+                    <option value="">Seleziona cliente...</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Create.SubscriptionPlanId" class="form-label">Piano</label>
+                <select asp-for="Create.SubscriptionPlanId" class="form-select" asp-items='new SelectList(Model.Plans, "Id", "Name")'>
+                    <option value="">Seleziona piano...</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="Create.StartDate" class="form-label">Inizio</label>
+                <input asp-for="Create.StartDate" type="date" class="form-control" />
+            </div>
+            <div class="col-md-2">
+                <label asp-for="Create.EndDate" class="form-label">Fine</label>
+                <input asp-for="Create.EndDate" type="date" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label asp-for="Create.Status" class="form-label">Stato</label>
+                <select asp-for="Create.Status" class="form-select">
+                    <option>Active</option>
+                    <option>Trial</option>
+                    <option>Suspended</option>
+                </select>
+            </div>
+            <div class="col-md-9">
+                <label asp-for="Create.Notes" class="form-label">Note</label>
+                <input asp-for="Create.Notes" class="form-control" placeholder="Opzionale" />
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary" type="submit">Crea abbonamento</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card border-0 shadow-sm">
     <div class="table-responsive">
         <table class="table mb-0">
             <thead><tr><th>Cliente</th><th>Piano</th><th>Inizio</th><th>Fine</th><th>Stato</th><th></th></tr></thead>
             <tbody>
-                @foreach (var s in Model)
+                @foreach (var s in Model.Items)
                 {
                     <tr>
-                        <td>@s.ClientName</td><td>@s.PlanName</td><td>@s.StartDate:dd/MM/yyyy</td><td>@s.EndDate?.ToString("dd/MM/yyyy")</td><td>@s.Status</td>
+                        <td>@s.ClientName</td>
+                        <td>@s.PlanName</td>
+                        <td>@s.StartDate:dd/MM/yyyy</td>
+                        <td>@s.EndDate?.ToString("dd/MM/yyyy")</td>
+                        <td>@s.Status</td>
                         <td>
                             @if (s.Status == "Active")
                             {
-                                <form asp-action="MarkExpired" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@s.Id"/><button class="btn btn-sm btn-outline-danger">Segna scaduto</button></form>
+                                <form asp-action="MarkExpired" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@s.Id" />
+                                    <input type="hidden" name="clientId" value="@Model.ClientId" />
+                                    <button class="btn btn-sm btn-outline-danger">Segna scaduto</button>
+                                </form>
                             }
                         </td>
                     </tr>
