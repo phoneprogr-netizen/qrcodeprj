@@ -41,18 +41,3 @@
 .site-footer a:hover {
     color: #fff;
 }
-
-.dashboard-action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: .75rem;
-    padding: .9rem 1rem;
-    font-weight: 600;
-}
-
-.dashboard-action-icon {
-    color: #2563eb;
-    font-size: 1.6rem;
-    line-height: 1;
-}
